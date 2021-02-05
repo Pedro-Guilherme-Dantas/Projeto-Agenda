@@ -18,9 +18,12 @@
 
 			$queryInsere = mysqli_query($conect,$insertAgenda);
 
+			header('Refresh:0');
+
 		}
 
 	}
+
 
 	function login()
 	{
@@ -98,124 +101,6 @@
 
 	}
 
-	function sair()
-	{
-
-		if (isset($_POST['btnSair'])) {
-
-			$_SESSION['numLogin'] = rand(100000,10000000);
-
-			header("Location: ../index.php");
-
-
-		}
-
-	}
-
-
-
-	function addEvento()
-	{
-
-		if (isset($_POST['btnAddEve'])) {
-
-			include "config.php";
-
-			$titulo = $_POST['inpTitulo'];
-			$agenda = $_POST['selectAg'];
-			$descricao = $_POST['inpDesc'];
-			$dtInicio = $_POST['dataInicio'];
-			$dtFim = $_POST['dataFim'];
-
-			$insertEvento = "INSERT INTO TB_EVENTOS (EVE_TITULO, EVE_DESCRICAO, EVE_DT_INICIO, EVE_DT_FIM, EVE_AGE_CODIGO) VALUES ('$titulo','$descricao','$dtInicio','$dtFim',$agenda)";
-
-			$queryEvento = mysqli_query($conect,$insertEvento);
-
-			header("Location: relatorio.php?num1=".$_SESSION['numLogin']);
-	}
-	}
-
-	function modAgenda()
-	{
-
-		include "config.php";
-		$getAgenda = $_GET['agenda'];
-
-		if (isset($_POST['btnExcluir'])) {
-
-			$sql = "DELETE FROM TB_AGENDA WHERE AGE_NOME = '$getAgenda' ";
-			$query = mysqli_query($conect,$sql);
-			header("Location:inicial.php?num1=".$_SESSION['numLogin']);
-		}
-
-
-		if (isset($_POST['btnEditar'])) {
-
-			$inputNome = $_POST['inpNome'];
-
-			$sql = "UPDATE TB_AGENDA SET AGE_NOME = '$inputNome' 
-			WHERE AGE_NOME = '$getAgenda' ";
-			$query = mysqli_query($conect,$sql);
-			header("Location:inicial.php?num1=".$_SESSION['numLogin']);
-
-		}
-
-
-	}
-
-	function modEvento()
-	{
-
-		include "config.php";
-		$getEvento = $_GET['evento'];
-
-		if (isset($_POST['btnExcluir'])) {
-
-			$sql = "DELETE FROM TB_EVENTOS WHERE EVE_TITULO = '$getEvento' ";
-			$query = mysqli_query($conect,$sql);
-			header("Location:relatorio.php?num1=".$_SESSION['numLogin']);
-		}
-
-
-		if (isset($_POST['btnEditar'])) {
-
-			$inputTitulo = $_POST['inpTitulo'];
-			$inputDesc = $_POST['inpDesc'];
-			$inputDtIncio = $_POST['dataInicio'];
-			$inputDtFim = $_POST['dataFim'];
-
-			$sql = "UPDATE TB_EVENTOS SET EVE_TITULO = '$inputTitulo', EVE_DESCRICAO = '$inputDesc', EVE_DT_INICIO = '$inputDtIncio', EVE_DT_FIM = '$inputDtFim'
-			WHERE EVE_TITULO = '$getEvento' ";
-			$query = mysqli_query($conect,$sql);
-			header("Location:relatorio.php?num1=".$_SESSION['numLogin']);
-
-		}
-
-
-	}
-
-	function eventosRestantes()
-	{
-
-		include "config.php";
-		
-		$usuCodigo = $_SESSION['codUser'];
-
-		$sql = " SELECT COUNT(EVE_DT_FIM) as total FROM TB_EVENTOS JOIN TB_AGENDA ON EVE_AGE_CODIGO = AGE_CODIGO
- 		WHERE AGE_USU_CODIGO = $usuCodigo AND YEAR(EVE_DT_FIM) = YEAR(now()) AND DAY(EVE_DT_FIM) >= DAY(NOW()) ";
-
- 		$query = mysqli_query($conect,$sql);
-
- 		while ($res = mysqli_fetch_array($query)) {
- 			
- 			$count = $res['total'];
-
- 		}
-
- 		echo $count;
-
-
-	}
 
 	function cadastrar()
 	{
@@ -249,6 +134,128 @@
 
 		    }
 		}
+
+
+	}
+
+
+	function sair()
+	{
+
+		if (isset($_POST['btnSair'])) {
+
+			$_SESSION['numLogin'] = rand(100000,10000000);
+
+			header("Location: ../index.php");
+
+
+		}
+
+	}
+
+
+	function addEvento()
+	{
+
+		if (isset($_POST['btnAddEve'])) {
+
+			include "config.php";
+
+			$titulo = $_POST['inpTitulo'];
+			$agenda = $_POST['selectAg'];
+			$descricao = $_POST['inpDesc'];
+			$dtInicio = $_POST['dataInicio'];
+			$dtFim = $_POST['dataFim'];
+
+			$insertEvento = "INSERT INTO TB_EVENTOS (EVE_TITULO, EVE_DESCRICAO, EVE_DT_INICIO, EVE_DT_FIM, EVE_AGE_CODIGO) VALUES ('$titulo','$descricao','$dtInicio','$dtFim',$agenda)";
+
+			$queryEvento = mysqli_query($conect,$insertEvento);
+
+			header("Location: relatorio.php?num1=".$_SESSION['numLogin']);
+	}
+	}
+
+
+	function modAgenda()
+	{
+
+		include "config.php";
+		$getAgenda = $_GET['agenda'];
+
+		if (isset($_POST['btnExcluir'])) {
+
+			$sql = "DELETE FROM TB_AGENDA WHERE AGE_NOME = '$getAgenda' ";
+			$query = mysqli_query($conect,$sql);
+			header("Location:inicial.php?num1=".$_SESSION['numLogin']);
+		}
+
+
+		if (isset($_POST['btnEditar'])) {
+
+			$inputNome = $_POST['inpNome'];
+
+			$sql = "UPDATE TB_AGENDA SET AGE_NOME = '$inputNome' 
+			WHERE AGE_NOME = '$getAgenda' ";
+			$query = mysqli_query($conect,$sql);
+			header("Location:inicial.php?num1=".$_SESSION['numLogin']);
+
+		}
+
+
+	}
+
+
+	function modEvento()
+	{
+
+		include "config.php";
+		$getEvento = $_GET['evento'];
+
+		if (isset($_POST['btnExcluir'])) {
+
+			$sql = "DELETE FROM TB_EVENTOS WHERE EVE_TITULO = '$getEvento' ";
+			$query = mysqli_query($conect,$sql);
+			header("Location:relatorio.php?num1=".$_SESSION['numLogin']);
+		}
+
+
+		if (isset($_POST['btnEditar'])) {
+
+			$inputTitulo = $_POST['inpTitulo'];
+			$inputDesc = $_POST['inpDesc'];
+			$inputDtIncio = $_POST['dataInicio'];
+			$inputDtFim = $_POST['dataFim'];
+
+			$sql = "UPDATE TB_EVENTOS SET EVE_TITULO = '$inputTitulo', EVE_DESCRICAO = '$inputDesc', EVE_DT_INICIO = '$inputDtIncio', EVE_DT_FIM = '$inputDtFim'
+			WHERE EVE_TITULO = '$getEvento' ";
+			$query = mysqli_query($conect,$sql);
+			header("Location:relatorio.php?num1=".$_SESSION['numLogin']);
+
+		}
+
+
+	}
+
+
+	function eventosRestantes()
+	{
+
+		include "config.php";
+		
+		$usuCodigo = $_SESSION['codUser'];
+
+		$sql = " SELECT COUNT(EVE_DT_FIM) as total FROM TB_EVENTOS JOIN TB_AGENDA ON EVE_AGE_CODIGO = AGE_CODIGO
+ 		WHERE AGE_USU_CODIGO = $usuCodigo AND YEAR(EVE_DT_FIM) = YEAR(now()) AND DAY(EVE_DT_FIM) >= DAY(NOW()) ";
+
+ 		$query = mysqli_query($conect,$sql);
+
+ 		while ($res = mysqli_fetch_array($query)) {
+ 			
+ 			$count = $res['total'];
+
+ 		}
+
+ 		echo $count;
 
 
 	}
