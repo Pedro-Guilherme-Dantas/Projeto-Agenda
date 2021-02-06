@@ -204,6 +204,39 @@
 
 	}
 
+	function valueEditEvento($key)
+	{
+		include "config.php";
+		$getEvento = $_GET['evento'];
+
+		$sql = "SELECT * FROM TB_EVENTOS WHERE EVE_TITULO = '$getEvento' ";
+		$query = mysqli_query($conect,$sql);
+
+		while ($res = mysqli_fetch_array($query)) {
+
+			$titulo = $res['EVE_TITULO'];
+			$descricao = $res['EVE_DESCRICAO'];
+
+			$dtInicio = $res['EVE_DT_INICIO']."";
+			$dtInicio = substr($dtInicio, 0, 10);
+
+			$dtFim = $res['EVE_DT_FIM']."";
+			$dtFim = substr($dtFim, 0, 10);
+				
+		}
+
+		if ($key == 1) {
+			return $titulo;
+		} else if ($key == 2) {
+			return $descricao;
+		} else if ($key == 3) {
+			return $dtInicio;
+		} else if ($key == 4) {
+			return $dtFim;
+		}
+
+
+	}
 
 	function modEvento()
 	{
@@ -257,7 +290,8 @@
 
  		echo $count;
 
-
 	}
+
+
 
  ?>
