@@ -49,6 +49,7 @@
       				<label for="inputPassword4.0">Confirme a senha</label>
 			    	<input type="password" class="form-control" id="inputPassword4.0" placeholder="Password" name="inpConfirm">
 			    	<button type="submit" class="btn btn-primary mt-3" name="btnCadastro">Cadastrar</button>
+			    	<a class="link-light ml-2 mt-2" href="../index.php">Voltar</a>
 			    </div>
 	
 			  

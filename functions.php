@@ -114,21 +114,31 @@
 		    $senha = $_POST['inpSenha'];
 		    $confirm = $_POST['inpConfirm'];
 
+		    $sqlVerifica = "SELECT USU_CODIGO FROM TB_USUARIOS WHERE USU_EMAIL = '$email' ";
+		    $queryVerifica = mysqli_query($conect, $sqlVerifica);
+
+		    $arrayVerifica = mysqli_fetch_array($queryVerifica);
+		    
+
 		    if ($senha != $confirm) {
 
 		    	echo "<script>alert('Senhas não conferem!!');</script>";
 
-		    } else if (empty($nome) or empty($email) or empty($senha) 
+		    } elseif (empty($nome) or empty($email) or empty($senha) 
 		    	or empty($confirm)) {
 
 		    	echo "<script>alert('preencha todos os campos!!');</script>";
+
+		    } elseif (!empty($arrayVerifica)) {
+
+		    	echo "<script>alert('Erro: Email já cadastrado!!');</script>";
 
 		    } else {
 		    	$senha = md5($senha);
 
 		    	$sql = "INSERT INTO TB_USUARIOS (USU_NOME,USU_EMAIL,USU_SENHA) 
 		    	VALUES ('$nome','$email','$senha')  ";
-		    	$query = mysqli_query($conect,$sql);
+		    	$query = mysqli_query($conect, $sql);
 
 		    	header("Location: ../index.php");
 
@@ -167,12 +177,25 @@
 			$dtInicio = $_POST['dataInicio'];
 			$dtFim = $_POST['dataFim'];
 
+			$sqlConflitoEve = "SELECT EVE_CODIGO FROM TB_EVENTOS WHERE EVE_TITULO = '$titulo' AND DAY(EVE_DT_FIM) >= DAY(NOW())";
+		    $queryConflitoEve = mysqli_query($conect, $sqlConflitoEve);
+
+		    $arrayConflitos = mysqli_fetch_array($queryConflitoEve);
+
+		    if (!empty($arrayConflitos)) {
+		    	echo "<script>alert('Erro: Já existe um evento ativo com esse nome!!');</script>";
+		    } else {
+
 			$insertEvento = "INSERT INTO TB_EVENTOS (EVE_TITULO, EVE_DESCRICAO, EVE_DT_INICIO, EVE_DT_FIM, EVE_AGE_CODIGO) VALUES ('$titulo','$descricao','$dtInicio','$dtFim',$agenda)";
 
-			$queryEvento = mysqli_query($conect,$insertEvento);
+			$queryEvento = mysqli_query($conect, $insertEvento);
 
 			header("Location: relatorio.php?num1=".$_SESSION['numLogin']);
+
+			}
+
 	}
+
 	}
 
 
@@ -185,7 +208,7 @@
 		if (isset($_POST['btnExcluir'])) {
 
 			$sql = "DELETE FROM TB_AGENDA WHERE AGE_NOME = '$getAgenda' ";
-			$query = mysqli_query($conect,$sql);
+			$query = mysqli_query($conect, $sql);
 			header("Location:inicial.php?num1=".$_SESSION['numLogin']);
 		}
 
@@ -196,7 +219,7 @@
 
 			$sql = "UPDATE TB_AGENDA SET AGE_NOME = '$inputNome' 
 			WHERE AGE_NOME = '$getAgenda' ";
-			$query = mysqli_query($conect,$sql);
+			$query = mysqli_query($conect, $sql);
 			header("Location:inicial.php?num1=".$_SESSION['numLogin']);
 
 		}
@@ -207,10 +230,10 @@
 	function valueEditEvento($key)
 	{
 		include "config.php";
-		$getEvento = $_GET['evento'];
+		$getId = $_GET['evento'];
 
-		$sql = "SELECT * FROM TB_EVENTOS WHERE EVE_TITULO = '$getEvento' ";
-		$query = mysqli_query($conect,$sql);
+		$sql = "SELECT * FROM TB_EVENTOS WHERE EVE_CODIGO = '$getId' ";
+		$query = mysqli_query($conect, $sql);
 
 		while ($res = mysqli_fetch_array($query)) {
 
@@ -227,11 +250,11 @@
 
 		if ($key == 1) {
 			return $titulo;
-		} else if ($key == 2) {
+		} elseif ($key == 2) {
 			return $descricao;
-		} else if ($key == 3) {
+		} elseif ($key == 3) {
 			return $dtInicio;
-		} else if ($key == 4) {
+		} elseif ($key == 4) {
 			return $dtFim;
 		}
 
@@ -242,15 +265,15 @@
 	{
 
 		include "config.php";
-		$getEvento = $_GET['evento'];
+		$getId = $_GET['evento'];
+		$getName = $_GET['name'];
 
 		if (isset($_POST['btnExcluir'])) {
 
-			$sql = "DELETE FROM TB_EVENTOS WHERE EVE_TITULO = '$getEvento' ";
-			$query = mysqli_query($conect,$sql);
+			$sql = "DELETE FROM TB_EVENTOS WHERE EVE_CODIGO = '$getId' ";
+			$query = mysqli_query($conect, $sql);
 			header("Location:relatorio.php?num1=".$_SESSION['numLogin']);
 		}
-
 
 		if (isset($_POST['btnEditar'])) {
 
@@ -259,10 +282,21 @@
 			$inputDtIncio = $_POST['dataInicio'];
 			$inputDtFim = $_POST['dataFim'];
 
-			$sql = "UPDATE TB_EVENTOS SET EVE_TITULO = '$inputTitulo', EVE_DESCRICAO = '$inputDesc', EVE_DT_INICIO = '$inputDtIncio', EVE_DT_FIM = '$inputDtFim'
-			WHERE EVE_TITULO = '$getEvento' ";
-			$query = mysqli_query($conect,$sql);
-			header("Location:relatorio.php?num1=".$_SESSION['numLogin']);
+			$sqlConflitoEve = "SELECT EVE_CODIGO FROM TB_EVENTOS WHERE EVE_TITULO = '$inputTitulo' AND DAY(EVE_DT_FIM) >= DAY(NOW())";
+		    $queryConflitoEve = mysqli_query($conect, $sqlConflitoEve);
+
+		    $arrayConflitos = mysqli_fetch_array($queryConflitoEve);
+
+		    if (!empty($arrayConflitos) && $inputTitulo != $getName) {
+		    	echo "<script>alert('Erro: Já existe um evento ativo com esse nome!!');</script>";
+		    } else {
+
+				$sql = "UPDATE TB_EVENTOS SET EVE_TITULO = '$inputTitulo', EVE_DESCRICAO = '$inputDesc', EVE_DT_INICIO = '$inputDtIncio', EVE_DT_FIM = '$inputDtFim'
+				WHERE EVE_CODIGO = '$getId' ";
+				$query = mysqli_query($conect, $sql);
+				header("Location:relatorio.php?num1=".$_SESSION['numLogin']);
+
+			}
 
 		}
 
@@ -280,7 +314,7 @@
 		$sql = " SELECT COUNT(EVE_DT_FIM) as total FROM TB_EVENTOS JOIN TB_AGENDA ON EVE_AGE_CODIGO = AGE_CODIGO
  		WHERE AGE_USU_CODIGO = $usuCodigo AND YEAR(EVE_DT_FIM) = YEAR(now()) AND DAY(EVE_DT_FIM) >= DAY(NOW()) ";
 
- 		$query = mysqli_query($conect,$sql);
+ 		$query = mysqli_query($conect, $sql);
 
  		while ($res = mysqli_fetch_array($query)) {
  			

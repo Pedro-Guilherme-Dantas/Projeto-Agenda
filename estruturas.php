@@ -51,12 +51,13 @@
 		$usuCodigo = $_SESSION['codUser'];
 		$numLogin = $_SESSION['numLogin'];
 		
-		$sqlDadosTabela = "SELECT AGE_NOME,EVE_TITULO,EVE_DESCRICAO,DATE_FORMAT((EVE_DT_INICIO),'%d %m %Y') as EVE_DT_INICIO,DATE_FORMAT((EVE_DT_FIM),'%d %m %Y') as EVE_DT_FIM FROM TB_AGENDA JOIN TB_EVENTOS ON EVE_AGE_CODIGO = AGE_CODIGO WHERE AGE_USU_CODIGO = $usuCodigo ORDER BY EVE_DT_INICIO DESC";
+		$sqlDadosTabela = "SELECT EVE_CODIGO,AGE_NOME,EVE_TITULO,EVE_DESCRICAO,DATE_FORMAT((EVE_DT_INICIO),'%d %m %Y') as EVE_DT_INICIO,DATE_FORMAT((EVE_DT_FIM),'%d %m %Y') as EVE_DT_FIM FROM TB_AGENDA JOIN TB_EVENTOS ON EVE_AGE_CODIGO = AGE_CODIGO WHERE AGE_USU_CODIGO = $usuCodigo ORDER BY EVE_DT_INICIO DESC";
 
 		$queryTabela = mysqli_query($conect,$sqlDadosTabela);
 
 		while($res = mysqli_fetch_array($queryTabela)){
 
+			$eveCod = $res['EVE_CODIGO'];
 			$nomeAgenda = $res['AGE_NOME'];
 			$nomeEve = $res['EVE_TITULO'];
 			$descricao = $res['EVE_DESCRICAO'];
@@ -66,7 +67,7 @@
 			$stringTabela = $stringTabela.'	
 				<tr>
 					<td class="border">'.$nomeAgenda.'</td>
-					<td class="border"> <a href="editEvento.php?num1='.$numLogin.'&evento='.$nomeEve.'">'.$nomeEve.'</a></td>
+					<td class="border"> <a href="editEvento.php?num1='.$numLogin.'&evento='.$eveCod.'&name='.$nomeEve.'">'.$nomeEve.'</a></td>
 					<td class="border">'.$descricao.'</td>
 					<td class="border">'.$dtInicio.'</td>
 					<td class="border">'.$dtFim.'</td>
